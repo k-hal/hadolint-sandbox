@@ -1,0 +1,23 @@
+name: hadolint
+on:
+  push:
+  pull_request:
+jobs:
+  Scan:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - uses: hadolint/hadolint-action@v2.1.0
+        name: Lint hadolint
+        with:
+          dockerfile: Dockerfile
+          format: 'sarif'
+          output-file: 'hadolint-results.sarif'
+      - name: Upload hadlint scan results to GitHub Security tab
+        if: ${{ always() }}
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'hadolint-results.sarif'
+          category: 'hadolint'
